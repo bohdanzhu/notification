@@ -1,0 +1,40 @@
+<?xml version="1.0"?>
+<extension key="notification" type="module">
+  <file>notification</file>
+  <name>notification</name>
+  <description>Notification system to watch entities for changes and send notification messages to related contacts.</description>
+  <license>AGPL-3.0</license>
+  <authors>
+    <author>
+      <name>SYSTOPIA GmbH</name>
+      <email>info@systopia.de</email>
+      <role>Maintainer</role>
+    </author>
+  </authors>
+  <urls>
+    <url desc="Main Extension Page">https://github.com/systopia/notification</url>
+    <url desc="Documentation">https://github.com/systopia/notification</url>
+    <url desc="Support">https://github.com/systopia/notification/issues</url>
+    <url desc="Licensing">https://www.gnu.org/licenses/agpl-3.0.html</url>
+  </urls>
+  <releaseDate/>
+  <version>0.0.1</version>
+  <develStage>dev</develStage>
+  <compatibility>
+    <ver>5.75</ver>
+  </compatibility>
+  <comments>This is a new, undeveloped module</comments>
+  <classloader>
+    <psr0 prefix="CRM_" path="."/>
+    <psr4 prefix="Civi\" path="Civi"/>
+  </classloader>
+  <civix>
+    <namespace>CRM/Notification</namespace>
+    <format>24.09.1</format>
+    <angularModule>crmNotification</angularModule>
+  </civix>
+  <mixins>
+    <mixin>entity-types-php@2.0.0</mixin>
+  </mixins>
+  <upgrader>CiviMix\Schema\Notification\AutomaticUpgrader</upgrader>
+</extension>
