@@ -1,60 +1,78 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace Civi\Notification\Entity;
 
-use Civi\Api4\NotificationRuleSet;
+use Civi\Api4\NotificationRule;
 
+/**
+ * @phpstan-type ruleSetEntityT array{
+ *   id: int,
+ *   monitored_entity_type: string,
+ *   source_entity_type: string,
+ *   source_entity_id: int,
+ *   is_active: bool,
+ *   is_execute_only_first_rule: bool,
+ * }
+ *
+ * @phpstan-extends AbstractEntity<ruleSetEntityT>
+ */
 class RuleSetEntity extends AbstractEntity {
 
-  private ?array $rules = NULL;
+  /**
+   * @return string
+   */
+  public function getMonitoredEntityType(): string {
+    return $this->entityValues['monitored_entity_type'];
+  }
 
   /**
-   * Magic method to load properties dynamically, ex. rules
+   * @return string
    */
-  public function __get($name) {
-    if (!property_exists($this, $name)) {
-      throw new \Exception("Property {$name} does not exist.");
-    }
-
-    if (!isset($this->$name)) {
-      switch ($name) {
-        case 'rules':
-          $this->$name = RuleEntity::loadByRuleSetId($this->getEntityValue('id'));
-          break;
-      }
-    }
-
-    return $this->$name;
+  public function getSourceEntityType(): string {
+    return $this->entityValues['source_entity_type'];
   }
 
-  public static function loadByEntityType(string $entityType): array {
-    $notificationRuleSets = NotificationRuleSet::get()
-      ->addSelect('*')
-      ->addWhere('monitored_entity_type', '=', $entityType)
-      ->addWhere('is_active', '=', 1)
-      ->execute();
-
-    $ruleSets = [];
-
-    foreach ($notificationRuleSets as $ruleSet) {
-      $ruleSets[] = new self($ruleSet);
-    }
-
-    return $ruleSets;
+  /**
+   * @return int
+   */
+  public function getSourceEntityId(): int {
+    return $this->entityValues['source_entity_id'];
   }
 
-  public static function hasActiveRuleSets(string $entityType): bool {
-    $result = NotificationRuleSet::get()
-      ->selectRowCount()
-      ->addWhere('monitored_entity_type', '=', $entityType)
+  /**
+   * @return bool
+   */
+  public function isActive(): bool {
+    return $this->entityValues['is_active'];
+  }
+
+  /**
+   * @return bool
+   */
+  public function isExecuteOnlyFirstRule(): bool {
+    return $this->entityValues['is_execute_only_first_rule'];
+  }
+
+  /**
+   * @return array<int, RuleEntity>
+   * @throws \CRM_Core_Exception
+   * @throws \Civi\API\Exception\UnauthorizedException
+   */
+  public function getRules(): array {
+    $notificationRules = NotificationRule::get(FALSE)
+      ->addWhere('rule_set_id', '=', $this->getId())
       ->addWhere('is_active', '=', TRUE)
+      ->addOrderBy('weight')
       ->execute();
 
-    return $result->count() > 0;
-  }
+    $rules = [];
+    foreach ($notificationRules as $rule) {
+      $rules[] = new RuleEntity($rule);
+    }
 
-  public function isExecuteOnlyFirstRule() {
-    return $this->getEntityValue('is_execute_only_first_rule');
+    return $rules;
   }
 
 }

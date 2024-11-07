@@ -1,26 +1,34 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace Civi\Notification\Entity;
 
+/**
+ * @template T of array<string, mixed>
+ *
+ * @phpstan-consistent-constructor
+ */
 abstract class AbstractEntity {
 
-  private array $entityValues;
+  /**
+   * @var T
+   */
+  protected array $entityValues;
 
+  /**
+   * @param T $entityValues
+   */
   public function __construct(array $entityValues) {
     $this->entityValues = $entityValues;
   }
 
-  public function __get($name) {
-
-  }
-
-  public function getEntityValue(string $key) {
-    // Check if the value is JSON-encoded and decode if so
-    if (\CRM_Utils_JSON::isValidJSON($this->entityValues[$key])) {
-      return json_decode($this->entityValues[$key], true);
-    }
-
-    return $this->entityValues[$key];
+  /**
+   * @return int
+   */
+  public function getId(): int {
+    /** @phpstan-ignore-next-line  */
+    return $this->entityValues['id'];
   }
 
 }

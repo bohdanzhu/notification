@@ -1,23 +1,31 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace Civi\Notification\Entity;
 
-use Civi\Api4\NotificationCondition;
-
+/**
+ * @phpstan-type conditionEntityT array{
+ *   id: int,
+ *   field_name: string,
+ *   operator: string,
+ *   value: string,
+ * }
+ *
+ * @phpstan-extends AbstractEntity<conditionEntityT>
+ */
 class ConditionEntity extends AbstractEntity {
 
-  public static function loadByRuleId(int $ruleId): array {
-    $notificationConditions = NotificationCondition::get()
-      ->addWhere('rule_id', '=', $ruleId)
-      ->execute();
+  public function getFieldName(): string {
+    return $this->entityValues['field_name'];
+  }
 
-    // Convert results into array of ConditionEntity objects
-    $conditions = [];
-    foreach ($notificationConditions as $condition) {
-      $conditions[] = new self($condition);
-    }
+  public function getOperator(): string {
+    return $this->entityValues['operator'];
+  }
 
-    return $conditions;
+  public function getValue(): string {
+    return $this->entityValues['value'];
   }
 
 }
