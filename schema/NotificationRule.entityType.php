@@ -90,6 +90,14 @@ return [
       'default' => FALSE,
       'description' => E::ts('Skip further rule if this rule was executed?'),
     ],
+    'weight' => [
+      'title' => ts('Order'),
+      'sql_type' => 'int',
+      'input_type' => 'Number',
+      'required' => TRUE,
+      'description' => ts('Ordering of notification rules.'),
+      'default' => 0,
+    ],
   ],
   'getIndices' => fn() => [
     'index_title' => [
@@ -100,6 +108,11 @@ return [
     'index_is_active' => [
       'fields' => [
         'is_active' => TRUE,
+      ],
+    ],
+    'index_weight' => [
+      'fields' => [
+        'weight' => TRUE,
       ],
     ],
   ],
